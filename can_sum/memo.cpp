@@ -52,7 +52,7 @@ bool can_sum_unbounded_memo(int target, const std::vector<int>& numbers, std::un
  * Time Complexity:  O(2^numbers.size()) - i increases during every recursive call
  * Space Complexity: O(numbers.size())
  */
-bool can_sum_bounded(int i, int target, std::vector<int>& numbers) {
+bool can_sum_bounded(int i, int target, const std::vector<int>& numbers) {
     if (target == 0) {
         return true;
     }
@@ -73,7 +73,7 @@ bool can_sum_bounded(int i, int target, std::vector<int>& numbers) {
  * Time Complexity:  O(target * numbers.size())
  * Space Complexity: O(numbers.size()) [stack] + O(target * numbers.size()) [memo]
  */
-bool can_sum_bounded_memo(int i, int target, std::vector<int>& numbers, std::unordered_map<std::string, bool>& memo) {
+bool can_sum_bounded_memo(int i, int target, const std::vector<int>& numbers, std::unordered_map<std::string, bool>& memo) {
     if (target == 0) {
         return true;
     }
