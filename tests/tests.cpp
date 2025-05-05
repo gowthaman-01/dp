@@ -1,10 +1,22 @@
 #include "tests.hpp"
 
 #include <cassert>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 
 using ll = long long;
+
+void print_vector(const std::vector<int>& v) {
+    std::cout << "{";
+    for (int i = 0; i < v.size(); ++i) {
+        std::cout << v[i];
+        if (i < v.size() - 1) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << "}\n";
+}
 
 void run_fibonacci_tests() {
     // 1, 2, 3, 4, 5, 6, 7,  8,  9  ... 50
@@ -40,4 +52,23 @@ void run_can_sum_tests() {
     
     std::unordered_map<std::string, bool> memo_bounded;
     assert(can_sum_bounded_memo(0, 300, {7, 14}, memo_bounded) == false);
+}
+
+void run_how_sum_tests() {
+    auto expected = std::vector<int>{2, 2, 3};
+    assert(how_sum_unbounded(7, std::vector<int>{2, 3}) == expected);
+
+    expected = {3, 4};
+    assert(how_sum_unbounded(7, std::vector<int>{5, 3, 4, 7}) == expected);
+    
+    expected = {2, 2, 2, 2};
+    assert(how_sum_unbounded(8, std::vector<int>{2, 3, 5}) == expected);
+    
+    expected = {};
+    assert(how_sum_unbounded(7, std::vector<int>{2, 4}) == expected);
+    assert(how_sum_unbounded_memo(300, std::vector<int>{7, 14}) == expected);
+    
+    assert(how_sum_bounded(7, std::vector<int>{2, 3}) == expected);
+    assert(how_sum_bounded_memo(300, std::vector<int>{7, 14}) == expected);
+    
 }

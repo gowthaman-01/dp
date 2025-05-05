@@ -20,7 +20,14 @@ bool can_sum_unbounded_memo(int target, const std::vector<int>& numbers, std::un
 bool can_sum_bounded(int i, int target, const std::vector<int>& numbers);
 bool can_sum_bounded_memo(int i, int target, const std::vector<int>& numbers, std::unordered_map<std::string, bool>& memo);
 
+// How Sum
+std::vector<int> how_sum_unbounded(int target, const std::vector<int>& numbers);
+std::vector<int> how_sum_unbounded_memo(int target, const std::vector<int>& numbers);
+std::vector<int> how_sum_bounded(int target, const std::vector<int>& numbers);
+std::vector<int> how_sum_bounded_memo(int target, const std::vector<int>& numbers);
+
 // Tests
 void run_fibonacci_tests();
 void run_grid_traveller_tests();
 void run_can_sum_tests();
+void run_how_sum_tests();
