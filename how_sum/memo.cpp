@@ -56,8 +56,8 @@ std::optional<std::vector<int>> how_sum_unbounded_memo(
         auto candidate = how_sum_unbounded_memo(target - num, numbers, memo);
         if (candidate) {
             candidate->push_back(num);
-            memo[target] = candidate;
-            return candidate;
+            memo[target] = std::move(candidate);
+            return memo[target];
         }
     }
     
@@ -120,15 +120,15 @@ std::optional<std::vector<int>> how_sum_bounded_memo(
     
     auto skip = how_sum_bounded_memo(target, i + 1, numbers, memo);
     if (skip) {
-        memo[key] = skip;
-        return skip;
+        memo[key] = std::move(skip);
+        return memo[key];
     }
     
     auto include = how_sum_bounded_memo(target - numbers[i], i + 1, numbers, memo);
     if (include) {
         include->push_back(numbers[i]);
-        memo[key] = include;
-        return include;
+        memo[key] = std::move(include);
+        return memo[key];
     }
     
     memo[key] = std::nullopt;
