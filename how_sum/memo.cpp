@@ -4,9 +4,9 @@
 #include <vector>
 
 /*
- * 1. Recursion unbounded
+ * 1. Unbounded recursion
  * - Time Complexity:  O(numbers.size()^target)
- * - Space Complexity: O(target) [result vector] O(target) [stack]
+ * - Space Complexity: O(target) [result vector] + O(target) [stack]
  */
 std::optional<std::vector<int>> how_sum_unbounded(int target, const std::vector<int>& numbers) {
     if (target < 0) {
@@ -30,9 +30,9 @@ std::optional<std::vector<int>> how_sum_unbounded(int target, const std::vector<
 }
 
 /*
- * 2. Recursion unbounded with memoization
+ * 2. Unbounded recursion with memoization
  * - Time Complexity:  O(numbers.size() * target + target^2) -> vector copying
- * - Space Compelxity: O(target^2) [memo] O(target) [result vector] O(target) [stack]
+ * - Space Compelxity: O(target^2) [memo] + O(target) [result vector] + O(target) [stack]
  */
 std::optional<std::vector<int>> how_sum_unbounded_memo(
     int target,
@@ -66,9 +66,9 @@ std::optional<std::vector<int>> how_sum_unbounded_memo(
 }
 
 /*
- 3. Recursion bounded
+ 3. Bounded recursion
  - Time Complexity:  O(2^numbers.size())
- - Space Complexity: O(numbers.size()) [stack] O(numbers.size()) [result vector]
+ - Space Complexity: O(numbers.size()) [result vector] + O(numbers.size()) [stack]
  */
 std::optional<std::vector<int>> how_sum_bounded(int target, int i, const std::vector<int>& numbers) {
     if (target == 0) {
@@ -94,9 +94,9 @@ std::optional<std::vector<int>> how_sum_bounded(int target, int i, const std::ve
 }
 
 /*
- 4. Recursion bounded with memoization
+ 4. Bounded recursion with memoization
  - Time Complexity:  O(numbers.size()^2 * target)
- - Space Complexity: O(numbers.size()) [stack] O(numbers.size()^2 * target) [memo], O(numbers.size()) [result vector]
+ - Space Complexity: O(numbers.size()^2 * target) [memo] + O(numbers.size()) [result vector] + O(numbers.size()) [stack]
  */
 std::optional<std::vector<int>> how_sum_bounded_memo(
     int target,
