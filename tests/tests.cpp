@@ -98,17 +98,40 @@ void run_how_sum_tests() {
 }
 
 void run_best_sum_tests() {
-//    auto expected = std::vector<int>{3, 5};
-//    assert(best_sum_unbounded(8, std::vector<int>{2, 3, 5}) == expected);
-//    
-//    expected = {7};
-//    assert(best_sum_unbounded(7, std::vector<int>{5, 3, 4, 7}) == expected);
-//    
-//    expected = {4, 4};
-//    assert(best_sum_unbounded(8, std::vector<int>{1, 4, 5}) == expected);
-//    
-//    expected = {25, 25, 25, 25};
-//    auto v = best_sum_unbounded_memo(100, std::vector<int>{1, 2, 5, 25});
-//    print_vector(v);
-//    assert(best_sum_unbounded_memo(100, std::vector<int>{1, 2, 5, 25}) == expected);
+    auto expected = std::vector<int>{5, 3};
+    auto result = best_sum_unbounded(8, std::vector<int>{2, 3, 5});
+    assert(result && result.value() == expected);
+    
+    expected = {7};
+    result = best_sum_unbounded(7, std::vector<int>{5, 3, 4, 7});
+    assert(result && result.value() == expected);
+    
+    expected = {10, 10};
+    result = best_sum_unbounded(20, std::vector<int>{2, 3, 4, 5, 10});
+    assert(result && result.value() == expected);
+    
+    expected = {25, 25, 25, 25};
+    std::unordered_map<int, std::optional<std::vector<int>>> memo;
+    result = best_sum_unbounded_memo(100, std::vector<int>{1, 2, 5, 25}, memo);
+    assert(result && result.value() == expected);
+    
+    result = best_sum_bounded(10, 0, std::vector<int>{2, 3});
+    assert(!result);
+    
+    expected = {10, 5, 3, 2};
+    result = best_sum_bounded(20, 0, std::vector<int>{2, 3, 4, 5, 10});
+    assert(result && result.value() == expected);
+    
+    std::unordered_map<std::string, std::optional<std::vector<int>>> memo_bounded;
+    result = best_sum_bounded_memo(100, 0, std::vector<int>{1, 2, 5, 25}, memo_bounded);
+    assert(!result);
+    
+    std::vector<int> big_numbers;
+    for (int i = 1; i <= 50; ++i) {
+        big_numbers.push_back(i);
+    }
+    memo_bounded.clear();
+    expected = {50, 49, 1};
+    result = best_sum_bounded_memo(100, 0, big_numbers, memo_bounded);
+    assert(result && result.value() == expected);
 }

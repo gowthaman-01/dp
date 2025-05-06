@@ -36,6 +36,21 @@ std::optional<std::vector<int>> how_sum_bounded_memo(
     std::unordered_map<std::string, std::optional<std::vector<int>>>& memo
 );
 
+// Best Sum
+std::optional<std::vector<int>> best_sum_unbounded(int target, const std::vector<int>& numbers);
+std::optional<std::vector<int>> best_sum_unbounded_memo(
+    int target,
+    const std::vector<int>& numbers,
+    std::unordered_map<int, std::optional<std::vector<int>>>& memo
+);
+std::optional<std::vector<int>> best_sum_bounded(int target, int i, const std::vector<int>& numbers);
+std::optional<std::vector<int>> best_sum_bounded_memo(
+    int target,
+    int i,
+    const std::vector<int>& numbers,
+    std::unordered_map<std::string, std::optional<std::vector<int>>>& memo
+);
+
 // Tests
 void run_fibonacci_tests();
 void run_grid_traveller_tests();
