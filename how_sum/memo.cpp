@@ -1,86 +1,50 @@
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-std::vector<int> how_sum_unbounded_helper(int target, const std::vector<int>& numbers, std::vector<int>& cur);
-std::vector<int> how_sum_unbounded_memo_helper(int target, const std::vector<int>& numbers,
-                                                    std::vector<int>& cur, std::unordered_map<int, std::vector<int>>& memo);
-std::vector<int> how_sum_bounded_helper(int target, int i, const std::vector<int>& numbers, std::vector<int>& cur);
-std::vector<int> how_sum_bounded_memo_helper(int target, int i, const std::vector<int>& numbers,
-                                                    std::vector<int>& cur, std::unordered_map<std::string, std::vector<int>>& memo);
-
 /*
- * Unbounded recursion
- * Time Complexity:  O(numbers.size()^target)
- * Space Complexity: O(target) [stack] O(target) [result vector]
+ * 1. Recursion unbounded
+ * - Time Complexity:  O(numbers.size()^target)
+ * - Space Complexity: O(target) [result vector] O(target) [stack]
  */
-std::vector<int> how_sum_unbounded(int target, const std::vector<int>& numbers) {
-    std::vector<int> cur{};
-    return how_sum_unbounded_helper(target, numbers, cur);
-}
-
-/*
- * Unbounded recursion with memoization
- * Time Complexity:  O(target * numbers.size())
- * Space Complexity: O(target) [stack] O(target^2) [memo] O(target) [result vector]
- */
-std::vector<int> how_sum_unbounded_memo(int target, const std::vector<int>& numbers) {
-    std::vector<int> cur{};
-    std::unordered_map<int, std::vector<int>> memo{};
-    return how_sum_unbounded_memo_helper(target, numbers, cur, memo);
-}
-
-/*
- * Bounded recursion
- * Time Complexity:  O(2^numbers.size())
- * Space Compelxity: O(numbers.size()) [stack] O(numbers.size()) [result vector]
- */
-std::vector<int> how_sum_bounded(int target, const std::vector<int>& numbers) {
-    std::vector<int> cur{};
-    return how_sum_bounded_helper(target, 0, numbers, cur);
-}
-
-/*
- * Bounded recursion with memoization
- * Time Complexity:  O(target * nums.size())
- * Space Complexity: O(nums.size()) [stack] O(target * nums.size()^2) [memo] O(nums.size()) [result vector]
- */
-std::vector<int> how_sum_bounded_memo(int target, const std::vector<int>& numbers) {
-    std::vector<int> cur{};
-    std::unordered_map<std::string, std::vector<int>> memo;
-    return how_sum_bounded_memo_helper(target, 0, numbers, cur, memo);
-}
-
-std::vector<int> how_sum_unbounded_helper(int target, const std::vector<int>& numbers, std::vector<int>& cur) {
-    if (target == 0) {
-        return cur;
+std::optional<std::vector<int>> how_sum_unbounded(int target, const std::vector<int>& numbers) {
+    if (target < 0) {
+        return std::nullopt;
     }
     
-    if (target < 0) {
-        return {};
+    if (target == 0) {
+        return std::vector<int>{};
     }
     
     for (int num: numbers) {
-        cur.push_back(num);
-        auto res = how_sum_unbounded_helper(target - num, numbers, cur);
-        if (!res.empty()) {
-            return res;
+        auto candidate = how_sum_unbounded(target - num, numbers);
+        
+        if (candidate) {
+            candidate->push_back(num);
+            return candidate;
         }
-        cur.pop_back();
     }
     
-    return {};
+    return std::nullopt;
 }
 
-std::vector<int> how_sum_unbounded_memo_helper(int target, const std::vector<int>& numbers, std::vector<int>& cur,
-                                                    std::unordered_map<int, std::vector<int>>& memo)
-{
-    if (target == 0) {
-        return cur;
+/*
+ * 2. Recursion unbounded with memoization
+ * - Time Complexity:  O(numbers.size() * target + target^2) -> vector copying
+ * - Space Compelxity: O(target^2) [memo] O(target) [result vector] O(target) [stack]
+ */
+std::optional<std::vector<int>> how_sum_unbounded_memo(
+    int target,
+    const std::vector<int>& numbers,
+    std::unordered_map<int, std::optional<std::vector<int>>>& memo
+) {
+    if (target < 0) {
+        return std::nullopt;
     }
     
-    if (target < 0) {
-        return {};
+    if (target == 0) {
+        return std::vector<int>{};
     }
     
     auto it = memo.find(target);
@@ -89,78 +53,87 @@ std::vector<int> how_sum_unbounded_memo_helper(int target, const std::vector<int
     }
     
     for (int num: numbers) {
-        cur.push_back(num);
-        auto res = how_sum_unbounded_memo_helper(target - num, numbers, cur, memo);
-        if (!res.empty()) {
-            memo[target] = res;
-            return res;
+        auto candidate = how_sum_unbounded_memo(target - num, numbers, memo);
+        if (candidate) {
+            candidate->push_back(num);
+            memo[target] = candidate;
+            return candidate;
         }
-        cur.pop_back();
     }
     
-    memo[target] = {};
-    return {};
+    memo[target] = std::nullopt;
+    return std::nullopt;
 }
 
-std::vector<int> how_sum_bounded_helper(int target, int i, const std::vector<int>& numbers, std::vector<int>& cur) {
+/*
+ 3. Recursion bounded
+ - Time Complexity:  O(2^numbers.size())
+ - Space Complexity: O(numbers.size()) [stack] O(numbers.size()) [result vector]
+ */
+std::optional<std::vector<int>> how_sum_bounded(int target, int i, const std::vector<int>& numbers) {
     if (target == 0) {
-        return cur;
+        return std::vector<int>{};
     }
     
     if (target < 0 || i >= numbers.size()) {
-        return {};
+        return std::nullopt;
     }
     
-    // Skip ith element
-    auto res = how_sum_bounded_helper(target, i + 1, numbers, cur);
-    if (!res.empty()) {
-        return res;
+    auto skip = how_sum_bounded(target, i + 1, numbers);
+    if (skip) {
+        return skip;
     }
     
-    // Include ith element
-    cur.push_back(numbers[i]);
-    res = how_sum_bounded_helper(target - numbers[i], i + 1, numbers, cur);
-    if (!res.empty()) {
-        return res;
+    auto include = how_sum_bounded(target - numbers[i], i + 1, numbers);
+    if (include) {
+        include->push_back(numbers[i]);
+        return include;
     }
     
-    cur.pop_back();
-    return {};
+    return std::nullopt;
 }
 
-std::vector<int> how_sum_bounded_memo_helper(int target, int i, const std::vector<int>& numbers,
-                                                    std::vector<int>& cur, std::unordered_map<std::string, std::vector<int>>& memo)
-{
+/*
+ 4. Recursion bounded with memoization
+ - Time Complexity:  O(numbers.size()^2 * target)
+ - Space Complexity: O(numbers.size()) [stack] O(numbers.size()^2 * target) [memo], O(numbers.size()) [result vector]
+ */
+std::optional<std::vector<int>> how_sum_bounded_memo(
+    int target,
+    int i,
+    const std::vector<int>& numbers,
+    std::unordered_map<std::string, std::optional<std::vector<int>>>& memo
+) {
     if (target == 0) {
-        return cur;
+        return std::vector<int>{};
     }
     
     if (target < 0 || i >= numbers.size()) {
-        return {};
+        return std::nullopt;
     }
     
-    std::string key = std::to_string(i) + "," + std::to_string(target);
+    std::string key = std::to_string(target) + "," + std::to_string(i);
     auto it = memo.find(key);
     if (it != memo.end()) {
         return it->second;
     }
     
-    // Skip ith element
-    auto res = how_sum_bounded_memo_helper(target, i + 1, numbers, cur, memo);
-    if (!res.empty()) {
-        memo[key] = res;
-        return res;
+    auto skip = how_sum_bounded_memo(target, i + 1, numbers, memo);
+    if (skip) {
+        memo[key] = skip;
+        return skip;
     }
     
-    cur.push_back(numbers[i]);
-    // Include ith element
-    res = how_sum_bounded_memo_helper(target - numbers[i], i + 1, numbers, cur, memo);
-    if (!res.empty()) {
-        memo[key] = res;
-        return res;
+    auto include = how_sum_bounded_memo(target - numbers[i], i + 1, numbers, memo);
+    if (include) {
+        include->push_back(numbers[i]);
+        memo[key] = include;
+        return include;
     }
-    cur.pop_back();
     
-    memo[key] = {};
-    return {};
+    memo[key] = std::nullopt;
+    return std::nullopt;
 }
+
+
+

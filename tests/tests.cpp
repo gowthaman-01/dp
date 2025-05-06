@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -25,7 +26,7 @@ void run_fibonacci_tests() {
     assert(fib(7) == 13);
     assert(fib(8) == 21);
     
-    std::unordered_map<ll, ll> memo;
+    std::unordered_map<int, ll> memo;
     assert(fib_memo(50, memo) == 12586269025);
 }
 
@@ -55,20 +56,59 @@ void run_can_sum_tests() {
 }
 
 void run_how_sum_tests() {
-    auto expected = std::vector<int>{2, 2, 3};
-    assert(how_sum_unbounded(7, std::vector<int>{2, 3}) == expected);
+    auto result = how_sum_unbounded(7, std::vector<int>{2, 3});
+    auto expected = std::vector<int>{3, 2, 2};
+    assert(result && result.value() == expected);
 
-    expected = {3, 4};
-    assert(how_sum_unbounded(7, std::vector<int>{5, 3, 4, 7}) == expected);
-    
+    result = how_sum_unbounded(7, std::vector<int>{5, 3, 4, 7});
+    expected = {4, 3};
+    assert(result && result.value() == expected);
+
+    result = how_sum_unbounded(8, std::vector<int>{2, 3, 5});
     expected = {2, 2, 2, 2};
-    assert(how_sum_unbounded(8, std::vector<int>{2, 3, 5}) == expected);
+    assert(result && result.value() == expected);
+
+    result = how_sum_unbounded(7, std::vector<int>{2, 4});
+    assert(!result);
     
-    expected = {};
-    assert(how_sum_unbounded(7, std::vector<int>{2, 4}) == expected);
-    assert(how_sum_unbounded_memo(300, std::vector<int>{7, 14}) == expected);
+    std::unordered_map<int, std::optional<std::vector<int>>> memo{};
+    result = how_sum_unbounded_memo(300, std::vector<int>{7, 14}, memo);
+    assert(!result);
     
-    assert(how_sum_bounded(7, std::vector<int>{2, 3}) == expected);
-    assert(how_sum_bounded_memo(300, std::vector<int>{7, 14}) == expected);
+    memo.clear();
+    expected = {25, 25, 25, 25};
+    result = how_sum_unbounded_memo(100, std::vector<int>{7, 14, 25}, memo);
+    assert(result && result.value() == expected);
+
+    expected = {5, 3};
+    result = how_sum_bounded(8, 0, std::vector<int>{2, 3, 5});
+    assert(result && result.value() == expected);
     
+    std::unordered_map<std::string, std::optional<std::vector<int>>> memo_bounded;
+    expected = {25, 25, 25, 25};
+    result = how_sum_bounded_memo(100, 0, std::vector<int>{25, 25, 25, 25}, memo_bounded);
+    assert(result && result.value() == expected);
+    
+    memo_bounded.clear();
+    result = how_sum_bounded_memo(300, 0, std::vector<int>{7, 14}, memo_bounded);
+    assert(!result);
+    
+    
+    
+}
+
+void run_best_sum_tests() {
+//    auto expected = std::vector<int>{3, 5};
+//    assert(best_sum_unbounded(8, std::vector<int>{2, 3, 5}) == expected);
+//    
+//    expected = {7};
+//    assert(best_sum_unbounded(7, std::vector<int>{5, 3, 4, 7}) == expected);
+//    
+//    expected = {4, 4};
+//    assert(best_sum_unbounded(8, std::vector<int>{1, 4, 5}) == expected);
+//    
+//    expected = {25, 25, 25, 25};
+//    auto v = best_sum_unbounded_memo(100, std::vector<int>{1, 2, 5, 25});
+//    print_vector(v);
+//    assert(best_sum_unbounded_memo(100, std::vector<int>{1, 2, 5, 25}) == expected);
 }
