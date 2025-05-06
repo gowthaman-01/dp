@@ -4,7 +4,7 @@
 
 /*
  * 1. Unbounded recursion
- * - Time Complexity:  O(target^numbers.size())
+ * - Time Complexity:  O(numbers.size()^target)
  * - Space Complexity: O(target)
  */
 bool can_sum_unbounded(int target, const std::vector<int>& numbers) {
@@ -61,11 +61,8 @@ bool can_sum_bounded(int i, int target, const std::vector<int>& numbers) {
         return false;
     }
 
-    if (can_sum_bounded(i + 1, target - numbers[i], numbers)) {
-        return true;
-    }
-    
-    return can_sum_bounded(i + 1, target, numbers);
+    return can_sum_bounded(i + 1, target - numbers[i], numbers) ||
+           can_sum_bounded(i + 1, target, numbers);
 }
 
 /*
@@ -88,18 +85,11 @@ bool can_sum_bounded_memo(int i, int target, const std::vector<int>& numbers, st
         return it->second;
     }
     
-    if (can_sum_bounded_memo(i + 1, target - numbers[i], numbers, memo)) {
-        memo[key] = true;
-        return true;
-    }
-    
-    if (can_sum_bounded_memo(i + 1, target, numbers, memo)) {
-        memo[key] = true;
-        return true;
-    }
-    
-    memo[key] = false;
-    return false;
+    bool res = can_sum_bounded_memo(i + 1, target - numbers[i], numbers, memo) ||
+                  can_sum_bounded_memo(i + 1, target, numbers, memo);
+
+    memo[key] = res;
+    return res;
 }
 
 

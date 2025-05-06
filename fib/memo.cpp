@@ -19,7 +19,7 @@ int fib(int n) {
  * - Time Complexity:  O(n)
  * - Space Complexity: O(n)
  */
-ll fib_memo(int n, std::unordered_map<ll, ll>& memo) {
+ll fib_memo(int n, std::unordered_map<int, ll>& memo) {
     if (n <= 2) {
         return 1;
     }

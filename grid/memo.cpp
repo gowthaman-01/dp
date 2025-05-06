@@ -43,6 +43,7 @@ ll grid_traveller_memo(int m, int n, std::unordered_map<std::string, ll>& memo) 
         return it->second;
     }
     
-    memo[key] = grid_traveller_memo(m - 1, n, memo) + grid_traveller_memo(m, n - 1, memo);
-    return memo[key];
+    auto res = grid_traveller_memo(m - 1, n, memo) + grid_traveller_memo(m, n - 1, memo);
+    memo[key] = res;
+    return res;
 }
